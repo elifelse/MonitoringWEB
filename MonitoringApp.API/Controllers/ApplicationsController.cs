@@ -1,0 +1,99 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MonitoringApp.Persistence.Contexts;
+using MonitoringApp.Persistence.Entities;
+
+namespace MonitoringApp.API.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ApplicationsController : ControllerBase
+    {
+        private readonly MonitoringDbContext _context;
+
+        public ApplicationsController(MonitoringDbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: api/Applications
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Applications>>> GetApplications()
+        {
+            return await _context.Applications.ToListAsync();
+        }
+
+        // GET: api/Applications/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Applications>> GetApplication(int id)
+        {
+            var application = await _context.Applications.FindAsync(id);
+            if (application == null)
+            {
+                return NotFound();
+            }
+            return application;
+        }
+
+        // POST: api/Applications
+        [HttpPost]
+        public async Task<ActionResult<Applications>> PostApplication(Applications application)
+        {
+            _context.Applications.Add(application);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetApplication), new { id = application.Id }, application);
+        }
+
+        // PUT: api/Applications/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutApplication(int id, Applications application)
+        {
+            if (id != application.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(application).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ApplicationExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // DELETE: api/Applications/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteApplication(int id)
+        {
+            var application = await _context.Applications.FindAsync(id);
+            if (application == null)
+            {
+                return NotFound();
+            }
+
+            _context.Applications.Remove(application);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        private bool ApplicationExists(int id)
+        {
+            return _context.Applications.Any(e => e.Id == id);
+        }
+    }
+}

@@ -1,0 +1,23 @@
+# .NET Core / ASP.NET Core
+bin/
+obj/
+
+# User secrets
+appsettings.Development.json
+
+# SignalR ve diğer bağımlılıkların depolandığı dosyalar
+wwwroot/
+
+# Rider/Visual Studio özel dosyaları
+.idea/
+.vs/
+
+# Log dosyaları
+logs/
+
+# SQLite veritabanı dosyaları
+*.db
+
+# Diğer hassas bilgiler
+secrets.json
+
